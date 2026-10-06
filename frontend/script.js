@@ -6,7 +6,7 @@
 // Determine API Base URL
 const API_BASE_URL = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
   ? '/api'
-  : 'http://localhost:5000/api';
+  : 'https://pennytracker-1e6u.onrender.com/api';
 
 // Predefined Categories
 const CATEGORIES = {
