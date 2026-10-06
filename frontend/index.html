@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PennyTracker - Personal Expense Tracker to manage income, expenses, and maintain financial balance.">
+  <title>PennyTracker - Personal Expense Tracker</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Global Notification / Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- AUTH SECTION (Login & Registration) -->
+  <section id="auth-section" class="auth-section">
+    <div class="auth-wrapper">
+      <div class="auth-brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-wallet"></i>
+        </div>
+        <h1 class="brand-name">PennyTracker</h1>
+        <p class="brand-tagline">Track your money. Manage your future.</p>
+      </div>
+
+      <div class="auth-card">
+        <!-- Auth Tabs -->
+        <div class="auth-tabs">
+          <button id="tab-login-btn" class="tab-btn active" type="button">
+            <i class="fa-solid fa-right-to-bracket"></i> Login
+          </button>
+          <button id="tab-register-btn" class="tab-btn" type="button">
+            <i class="fa-solid fa-user-plus"></i> Register
+          </button>
+        </div>
+
+        <!-- Auth Alert Message Box -->
+        <div id="auth-alert" class="alert-box hidden" role="alert"></div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <div class="input-with-icon">
+              <i class="fa-regular fa-envelope"></i>
+              <input type="email" id="login-email" placeholder="name@example.com" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
+            </div>
+          </div>
+
+          <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block">
+            <span class="btn-text">Login to Dashboard</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+
+          <div class="auth-switch-text">
+            Don't have an account? 
+            <a href="#" id="switch-to-register">Create Account / Register</a>
+          </div>
+        </form>
+
+        <!-- Registration Form -->
+        <form id="register-form" class="auth-form hidden" novalidate>
+          <div class="form-group">
+            <label for="register-name">Full Name</label>
+            <div class="input-with-icon">
+              <i class="fa-regular fa-user"></i>
+              <input type="text" id="register-name" placeholder="John Doe" required autocomplete="name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-email">Email Address</label>
+            <div class="input-with-icon">
+              <i class="fa-regular fa-envelope"></i>
+              <input type="email" id="register-email" placeholder="name@example.com" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="register-password" placeholder="At least 6 characters" required autocomplete="new-password">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-confirm-password">Confirm Password</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-shield-halved"></i>
+              <input type="password" id="register-confirm-password" placeholder="Repeat your password" required autocomplete="new-password">
+            </div>
+          </div>
+
+          <button type="submit" id="register-submit-btn" class="btn btn-primary btn-block">
+            <span class="btn-text">Register Account</span>
+            <i class="fa-solid fa-user-check"></i>
+          </button>
+
+          <div class="auth-switch-text">
+            Already have an account? 
+            <a href="#" id="switch-to-login">Login here</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD SECTION -->
+  <section id="dashboard-section" class="dashboard-section hidden">
+    <!-- Navbar -->
+    <header class="dashboard-header">
+      <div class="header-container">
+        <div class="header-brand">
+          <div class="brand-logo-small">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <div class="brand-info">
+            <h1 class="brand-title">PennyTracker</h1>
+            <p id="user-welcome-msg" class="welcome-text">Welcome, User</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button id="logout-btn" class="btn btn-outline-danger" title="Logout from PennyTracker">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard-main container">
+      <!-- Dashboard Alert Box -->
+      <div id="dashboard-alert" class="alert-box hidden" role="alert"></div>
+
+      <!-- Financial Summary Cards -->
+      <section class="summary-cards-grid" aria-label="Financial Summary">
+        <!-- Total Income Card -->
+        <div class="summary-card card-income">
+          <div class="card-icon-box icon-income">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+          </div>
+          <div class="card-details">
+            <span class="card-label">Total Income</span>
+            <h2 id="total-income-display" class="card-amount">₹0</h2>
+          </div>
+        </div>
+
+        <!-- Total Expense Card -->
+        <div class="summary-card card-expense">
+          <div class="card-icon-box icon-expense">
+            <i class="fa-solid fa-arrow-trend-down"></i>
+          </div>
+          <div class="card-details">
+            <span class="card-label">Total Expense</span>
+            <h2 id="total-expense-display" class="card-amount">₹0</h2>
+          </div>
+        </div>
+
+        <!-- Total Balance Card -->
+        <div class="summary-card card-balance">
+          <div class="card-icon-box icon-balance">
+            <i class="fa-solid fa-scale-balanced"></i>
+          </div>
+          <div class="card-details">
+            <span class="card-label">Total Balance</span>
+            <h2 id="total-balance-display" class="card-amount">₹0</h2>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rules Banner / Notice -->
+      <div class="rules-badge-bar">
+        <span class="rule-chip"><i class="fa-solid fa-circle-info"></i> Max transaction limit: <strong>₹10,000</strong></span>
+        <span class="rule-chip"><i class="fa-solid fa-shield"></i> Minimum balance required: <strong>₹1,000</strong></span>
+      </div>
+
+      <!-- Main Layout: Add Transaction Form & Charts -->
+      <div class="dashboard-grid">
+        <!-- Left Column: Add Transaction Form -->
+        <div class="grid-col form-col">
+          <div class="content-card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fa-solid fa-plus-circle text-primary"></i> Add Transaction
+              </h3>
+              <span class="card-subtitle">Record an income or expense</span>
+            </div>
+
+            <form id="add-transaction-form" class="transaction-form" novalidate>
+              <!-- Type Radio Buttons -->
+              <div class="form-group">
+                <label class="form-label">Transaction Type</label>
+                <div class="type-toggle-group">
+                  <label class="type-option">
+                    <input type="radio" name="transaction-type" value="income" id="type-income">
+                    <span class="type-btn type-income-btn">
+                      <i class="fa-solid fa-plus"></i> Income
+                    </span>
+                  </label>
+                  <label class="type-option">
+                    <input type="radio" name="transaction-type" value="expense" id="type-expense" checked>
+                    <span class="type-btn type-expense-btn">
+                      <i class="fa-solid fa-minus"></i> Expense
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Amount Input -->
+              <div class="form-group">
+                <label for="transaction-amount" class="form-label">
+                  Amount (<span class="rupee-symbol">₹</span>)
+                  <small class="text-muted">(Max: ₹10,000)</small>
+                </label>
+                <div class="input-with-icon">
+                  <span class="input-addon">₹</span>
+                  <input type="number" id="transaction-amount" placeholder="0.00" min="0.01" max="10000" step="any" required>
+                </div>
+              </div>
+
+              <!-- Category Select -->
+              <div class="form-group">
+                <label for="transaction-category" class="form-label">Category</label>
+                <div class="input-with-icon">
+                  <i class="fa-solid fa-tags"></i>
+                  <select id="transaction-category" required>
+                    <!-- Populated dynamically based on Income or Expense -->
+                  </select>
+                </div>
+              </div>
+
+              <!-- Description Input -->
+              <div class="form-group">
+                <label for="transaction-description" class="form-label">Description</label>
+                <div class="input-with-icon">
+                  <i class="fa-regular fa-comment-dots"></i>
+                  <input type="text" id="transaction-description" placeholder="E.g. Grocery shopping, Client invoice" maxlength="100">
+                </div>
+              </div>
+
+              <!-- Date Input -->
+              <div class="form-group">
+                <label for="transaction-date" class="form-label">Date</label>
+                <div class="input-with-icon">
+                  <i class="fa-regular fa-calendar-days"></i>
+                  <input type="date" id="transaction-date" required>
+                </div>
+              </div>
+
+              <button type="submit" id="add-transaction-btn" class="btn btn-primary btn-block">
+                <i class="fa-solid fa-paper-plane"></i> Save Transaction
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right Column: Charts Section -->
+        <div class="grid-col charts-col">
+          <div class="content-card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fa-solid fa-chart-pie text-primary"></i> Financial Analytics
+              </h3>
+              <span class="card-subtitle">Real-time breakdown of your finances</span>
+            </div>
+
+            <div class="charts-container">
+              <!-- Chart 1: Income vs Expense -->
+              <div class="chart-box">
+                <h4 class="chart-heading">Income vs Expense</h4>
+                <div class="chart-canvas-wrapper">
+                  <canvas id="incomeVsExpenseChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 2: Expense by Category -->
+              <div class="chart-box">
+                <h4 class="chart-heading">Expense by Category</h4>
+                <div class="chart-canvas-wrapper">
+                  <canvas id="expenseByCategoryChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chart 3: Transaction Trend / History -->
+            <div class="chart-box chart-box-wide">
+              <h4 class="chart-heading">Transaction History Trend</h4>
+              <div class="chart-canvas-wrapper chart-canvas-wide">
+                <canvas id="transactionHistoryChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction History Section -->
+      <section class="content-card history-section" aria-label="Transaction History">
+        <div class="card-header history-header">
+          <div>
+            <h3 class="card-title">
+              <i class="fa-solid fa-clock-rotate-left text-primary"></i> Transaction History
+            </h3>
+            <span class="card-subtitle">Newest transactions displayed first</span>
+          </div>
+          
+          <div class="history-controls">
+            <div class="filter-group">
+              <label for="filter-type" class="filter-label"><i class="fa-solid fa-filter"></i> Filter:</label>
+              <select id="filter-type" class="select-sm">
+                <option value="all">All Types</option>
+                <option value="income">Income Only</option>
+                <option value="expense">Expense Only</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="transaction-table" id="transaction-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-table-body">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+
+          <!-- Empty State -->
+          <div id="no-transactions-msg" class="empty-state hidden">
+            <div class="empty-icon">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
+            <h4>No Transactions Yet</h4>
+            <p>Your recorded incomes and expenses will show up here. Add one above to get started!</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <div class="container footer-content">
+        <div class="footer-brand-box">
+          <h3 class="footer-logo">
+            <i class="fa-solid fa-wallet"></i> PennyTracker
+          </h3>
+          <p class="footer-tagline">Track your money. Manage your future.</p>
+        </div>
+        <div class="footer-contact-box">
+          <h4 class="footer-contact-title">Contact Us:</h4>
+          <p class="footer-contact-item">
+            <i class="fa-regular fa-envelope"></i> Email: <a href="mailto:support@pennytracker.com">support@pennytracker.com</a>
+          </p>
+          <p class="footer-contact-item">
+            <i class="fa-solid fa-phone"></i> Phone: <span>+91 XXXXX XXXXX</span>
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; PennyTracker. All rights reserved.</p>
+      </div>
+    </footer>
+  </section>
+
+  <!-- EDIT TRANSACTION MODAL -->
+  <div id="edit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="edit-modal-title" class="modal-title">
+          <i class="fa-solid fa-pen-to-square text-primary"></i> Edit Transaction
+        </h3>
+        <button id="close-edit-modal-btn" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div id="edit-modal-alert" class="alert-box hidden" role="alert"></div>
+
+      <form id="edit-transaction-form" class="modal-form" novalidate>
+        <input type="hidden" id="edit-transaction-id">
+
+        <!-- Edit Type -->
+        <div class="form-group">
+          <label class="form-label">Transaction Type</label>
+          <div class="type-toggle-group">
+            <label class="type-option">
+              <input type="radio" name="edit-transaction-type" value="income" id="edit-type-income">
+              <span class="type-btn type-income-btn">
+                <i class="fa-solid fa-plus"></i> Income
+              </span>
+            </label>
+            <label class="type-option">
+              <input type="radio" name="edit-transaction-type" value="expense" id="edit-type-expense">
+              <span class="type-btn type-expense-btn">
+                <i class="fa-solid fa-minus"></i> Expense
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Edit Amount -->
+        <div class="form-group">
+          <label for="edit-transaction-amount" class="form-label">
+            Amount (<span class="rupee-symbol">₹</span>)
+            <small class="text-muted">(Max: ₹10,000)</small>
+          </label>
+          <div class="input-with-icon">
+            <span class="input-addon">₹</span>
+            <input type="number" id="edit-transaction-amount" min="0.01" max="10000" step="any" required>
+          </div>
+        </div>
+
+        <!-- Edit Category -->
+        <div class="form-group">
+          <label for="edit-transaction-category" class="form-label">Category</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-tags"></i>
+            <select id="edit-transaction-category" required>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Edit Description -->
+        <div class="form-group">
+          <label for="edit-transaction-description" class="form-label">Description</label>
+          <div class="input-with-icon">
+            <i class="fa-regular fa-comment-dots"></i>
+            <input type="text" id="edit-transaction-description" maxlength="100">
+          </div>
+        </div>
+
+        <!-- Edit Date -->
+        <div class="form-group">
+          <label for="edit-transaction-date" class="form-label">Date</label>
+          <div class="input-with-icon">
+            <i class="fa-regular fa-calendar-days"></i>
+            <input type="date" id="edit-transaction-date" required>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="cancel-edit-btn" class="btn btn-secondary">Cancel</button>
+          <button type="submit" id="save-edit-btn" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> Update Transaction
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript logic -->
+  <script src="script.js"></script>
+</body>
+</html>
